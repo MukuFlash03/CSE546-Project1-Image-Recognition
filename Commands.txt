@@ -1,0 +1,83 @@
+set environment variables:
+export AWS_ACCESS_KEY_ID=AKIA4XD6E4L77UWI6O7H
+export AWS_SECRET_ACCESS_KEY=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
+export AWS_DEFAULT_REGION=us-east-1
+
+Connect to EC2 WebTier
+ssh -i "EC2_pair.pem" ec2-user@ec2-54-83-163-117.compute-1.amazonaws.com
+For App Tier:
+ssh -i "CSE546_Project1.pem" ubuntu@ec2-34-204-81-184.compute-1.amazonaws.com
+
+Activate virtual env
+source venv/bin/activate
+
+local
+E:\Courses\CC\Projects\WebTier\.venv\Scripts\activate
+
+File transfer
+scp -i CSE546_Project1.pem E:\Courses\CC\Projects\WebTier\modified_classification.py ubuntu@ec2-34-204-81-184.compute-1.amazonaws.com:/home/ubuntu/ 
+
+
+Run workload
+python multithread_workload_generator.py  --image_folder E:\Courses\CC\Projects\imagenet-100-updated\imagenet-100\ --url http://54.83.163.117:5000/upload --num_request 10
+
+----
+scp -i EC2_pair.pem E:\Courses\CC\Projects\WebTier\app.py ec2-user@ec2-54-83-163-117.compute-1.amazonaws.com:/home/ec2-user/WebTier 
+scp -i CSE546_Project1.pem E:\Courses\CC\Projects\imagenet-100-updated\imagenet-100\test_0.JPEG ubuntu@ec2-34-204-81-184.compute-1.amazonaws.com:/home/ubuntu/
+
+
+------------
+
+Mukul
+
+Fetch WebTier logs:
+scp -i /home/mukuflash/Documents/VS_Code/AWS/Credentials/EC2_pair.pem ec2-user@ec2-54-83-163-117.compute-1.amazonaws.com:/home/ec2-user/WebTier/flask.log .
+scp -i /home/mukuflash/Documents/VS_Code/AWS/Credentials/CSE546_Project1.pem ubuntu@ec2-34-204-81-184.compute-1.amazonaws.com:/home/ubuntu/modified_classification.py E:\Courses\CC\Projects\WebTier\modified_classification.py 
+
+scp -i /home/mukuflash/Documents/VS_Code/AWS/Credentials/CSE546_Project1.pem /home/mukuflash/Documents/VS_Code/AWS/AppTier/WebTier/modified_classification.py ubuntu@ec2-34-204-81-184.compute-1.amazonaws.com:/home/ubuntu/ 
+
+
+python3 workload/multithread_workload_generator.py --image_folder images --url http://54.83.163.117:5000/upload --num_request 100
+
+
+******* systemd config **********
+
+Alternatively, you can also use systemd to run a Python script when an EC2 instance starts. Here are the steps to do this:
+
+Create a systemd unit file for your Python script. The unit file is a configuration file that tells systemd how to start and manage your script. The unit file should be created in the /etc/systemd/system directory and should have a .service extension. For example, you could create a file called my_script.service with the following contents:
+makefile
+Copy code
+[Unit]
+Description=My Python Script
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /path/to/my_script.py
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+Make sure to replace /path/to with the actual path to your Python file.
+
+Reload the systemd daemon to read the new unit file:
+Copy code
+sudo systemctl daemon-reload
+	Start the systemd service:
+
+sudo systemctl start apptier.service
+
+	Verify that the service is running:
+
+sudo systemctl status apptier.service
+
+	The output should show that the service is active and running.
+
+	the systemd service to start automatically on boot:
+
+sudo systemctl enable apptier.service
+
+Now your Python script will be run automatically when the EC2 instance starts up, and systemd will manage the process for you. You can view the logs for your script using the journalctl command, for example:
+
+Copy code
+sudo journalctl -u my_script.service
