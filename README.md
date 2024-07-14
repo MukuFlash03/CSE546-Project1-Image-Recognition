@@ -8,5 +8,7 @@ Course Project on Image Recognition app based on AWS Cloud Architecture.
 
 # Auto-Scaling Demo Video
 
-https://github.com/user-attachments/assets/9db53cb2-46c0-4b6c-91e0-7545bbe9a511
+https://github.com/user-attachments/assets/d405aed0-9d18-4d27-a13f-715bd54df89b
+
+
 
